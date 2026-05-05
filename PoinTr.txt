@@ -1,0 +1,71 @@
+运行1（推理）
+CUDA_VISIBLE_DEVICES=0 python tools/inference.py  cfgs/PCN_models/AdaPoinTr.yaml  ckpts/AdaPoinTr_PCN.pth  --pc_root demo/  --save_vis_img    --out_pc_root inference_result/ 
+
+
+结果1
+(pcdet1) a402@402:~/4T/wyh/PoinTr-master$ CUDA_VISIBLE_DEVICES=0 python tools/inference.py  cfgs/PCN_models/AdaPoinTr.yaml  ckpts/AdaPoinTr_PCN.pth  --pc_root demo/  --save_vis_img    --out_pc_root inference_result/ 
+2024-04-14 12:56:37,390 - MODEL - INFO - Transformer with config {'NAME': 'AdaPoinTr', 'num_query': 512, 'num_points': 16384, 'center_num': [512, 256], 'global_feature_dim': 1024, 'encoder_type': 'graph', 'decoder_type': 'fc', 'encoder_config': {'embed_dim': 384, 'depth': 6, 'num_heads': 6, 'k': 8, 'n_group': 2, 'mlp_ratio': 2.0, 'block_style_list': ['attn-graph', 'attn', 'attn', 'attn', 'attn', 'attn'], 'combine_style': 'concat'}, 'decoder_config': {'embed_dim': 384, 'depth': 8, 'num_heads': 6, 'k': 8, 'n_group': 2, 'mlp_ratio': 2.0, 'self_attn_block_style_list': ['attn-graph', 'attn', 'attn', 'attn', 'attn', 'attn', 'attn', 'attn'], 'self_attn_combine_style': 'concat', 'cross_attn_block_style_list': ['attn-graph', 'attn', 'attn', 'attn', 'attn', 'attn', 'attn', 'attn'], 'cross_attn_combine_style': 'concat'}}
+using group version 2
+Loading weights from ckpts/AdaPoinTr_PCN.pth...
+ckpts @ 353 epoch( performance = {'F-Score': 0.8446799506656607, 'CDL1': 6.527985830404605, 'CDL2': 0.19307194130320907, 'EMDistance': 0.0})
+
+
+
+bash ./scripts/test.sh   0     --ckpts ./pretrained/KITTI.pth     --config ./cfgs/KITTI_models/PoinTr.yaml     --exp_name example
+
+训练
+
+
+
+bash ./scripts/train.sh   0  --config ./cfgs/ShapeNet55_models/AdaPoinTr.yaml     --exp_name example1
+
+bash ./scripts/test.sh   0     --ckpts ./experiments/PCN/PCN_models/my_PCN_PCNsjj/ckpt-best.pth    --config ./cfgs/PCN_models/PCN.yaml     --exp_name my_PCN_PCNsjj
+
+
+
+bash ./scripts/train.sh 0 --config ./cfgs/PCN_models/SnowFlakeNet.yaml --exp_name example1
+
+nohup bash ./scripts/train.sh 0 --config ./cfgs/PCN_models/SnowFlakeNet.yaml --exp_name seed+SEBlock  >/dev/null 2>&1 &
+
+
+nohup bash ./scripts/train.sh 0 --config ./cfgs/PCN_models/SnowFlakeNet.yaml --exp_name seed+SEBlock-x3  > seed+SEBlock-x3.log 2>&1 &
+
+nohup CUDA_VISIBLE_DEVICES=0,1 bash ./scripts/dist_train.sh 2 13232     --config ./cfgs/PCN_models/SnowFlakeNet.yaml     --exp_name example   > lianggeGPU.log 2>&1 &
+
+nohup bash ./scripts/test.sh 1     --ckpts ./experiments/SnowFlakeNet/ShapeNet55_models/test/ckpt-best.pth  --config ./cfgs/ShapeNet55_models/SnowFlakeNet.yaml     --mode easy     --exp_name test  >/dev/null 2>&1 &
+
+
+nohup bash ./scripts/test.sh 1     --ckpts ./experiments/SnowFlakeNet/ShapeNet34_models/SPD3.1+F6+ldj2/ckpt-best.pth  --config ./cfgs/ShapeNet34_models/SnowFlakeNet.yaml     --mode easy     --exp_name SPD3.1+F6+ldj2 >/dev/null 2>&1 &
+
+
+bash ./scripts/test.sh 0     --ckpts ./experiments/SnowFlakeNet4-4/ShapeNet55_models/off-sh55-4-4/ckpt-best.pth  --config ./cfgs/ShapeNet55_models/SnowFlakeNet4-4.yaml     --mode easy     --exp_name off-sh55-4-4
+
+
+
+nohup bash ./scripts/test.sh 1     --ckpts ./experiments/SnowFlakeNet/ShapeNet34_models/SPD3.1+F6+ldj2/ckpt-best.pth  --config ./cfgs/ShapeNetUnseen21_models/SnowFlakeNet.yaml     --mode easy     --exp_name SPD3.1+F6+ldj2 >/dev/null 2>&1 &
+
+nohup bash ./scripts/train.sh 1 --config ./cfgs/Projected_ShapeNet55_models/SnowFlakeNet.yaml --exp_name SPD3.1+F6+ldj2  >/dev/null 2>&1 &
+
+nohup bash ./scripts/test.sh 1     --ckpts ./experiments/SnowFlakeNet/Projected_ShapeNet34_models/SPD3.1+F6+ldj2/ckpt-best.pth  --config ./cfgs/Projected_ShapeNet34_models/SnowFlakeNet.yaml   --exp_name SPD3.1+F6+ldj2 >/dev/null 2>&1 &
+
+
+bash ./scripts/train.sh 1 --config ./cfgs/Completion3D_models/SnowFlakeNet.yaml --exp_name Com3D-SPD3.1-F6-ldj2
+nohup  bash ./scripts/train.sh 1 --config ./cfgs/Completion3D_models/SnowFlakeNet.yaml --exp_name Com3D-SPD3.1-F6-ldj2 > ./cpm3D.log 2>&1 &
+
+nohup  bash ./scripts/train.sh 0 --config ./cfgs/Projected_ShapeNet34_models/SnowFlakeNet4-4.yaml --exp_name SPD3.1-F6-ldj2  >/dev/null 2>&1 &
+
+
+nohup  bash ./scripts/train.sh 0 --config ./cfgs/Projected_ShapeNet34_models/SnowFlakeNet.yaml --exp_name sange-4-4  >/dev/null 2>&1 &
+
+
+crop_ratio = {
+    'easy': 1/4,
+    'median' :1/2,
+    'hard':3/4
+}
+
+// kitti
+nohup bash ./scripts/train.sh   0  --config ./cfgs/KITTI_models/PoinTr.yaml     --exp_name kitti-pcn-feedpointr    --start_ckpts ./pretrained/PCN-FeedPoinTr.pth  >/dev/null 2>&1 &
+
+
+nohup bash ./scripts/train.sh   1  --config ./cfgs/KITTI_models/AdaPoinTr.yaml     --exp_name kitti-pcn-feedadapointr    --start_ckpts ./pretrained/PCN-FeedAdaPoinTr.pth  >/dev/null 2>&1 &
