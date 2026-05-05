@@ -1,4 +1,4 @@
-from tools import run_net
+from tools import run_net99999999999999
 from tools import test_net
 from utils import parser, dist_utils, misc
 from utils.logger import *
